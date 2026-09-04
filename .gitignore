@@ -1,0 +1,14 @@
+# Virtual Environment
+.venv/
+venv/
+
+# SQLite database
+db.sqlite3
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# Django migrations (if you want to keep them generated locally)
+# quiz/migrations/

@@ -1,0 +1,28 @@
+{% extends "quiz/base.html" %}
+{% load static %}
+{% block title %}Add Question to {{ exam.title }}{% endblock %}
+{% block content %}
+<h2>Add Question to {{ exam.title }}</h2>
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        {{ q_form.label_tag }}<br>
+        {{ q_form.statement }}
+        {% if q_form.errors %}
+        <div class="text-danger small">{{ q_form.errors }}</div>
+        {% endif %}
+    </div>
+    
+    <h4>Choices (exactly one must be correct)</h4>
+    {% for form in c_formset %}
+    <div class="mb-2">
+        {{ form.label_tag }}<br>
+        {{ form.text }}{% if form.errors %}<div class="text-danger small">{{ form.errors.as_text }}</div>{% endif %}
+        {{ form.is_correct }}{% if form.errors %}<span class="text-danger small">{{ form.errors.as_ul }}</span>{% endif %}
+    </div>
+    {% endfor %}
+    
+    <button type="submit" class="btn btn-primary mt-3">Save Question</button>
+    <a href="{% url 'quiz:exam_detail' exam.pk %}" class="btn btn-secondary mt-3">Cancel</a>
+</form>
+{% endblock %}

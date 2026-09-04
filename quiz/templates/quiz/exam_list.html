@@ -1,0 +1,21 @@
+{% extends "quiz/base.html" %}
+{% load static %}
+{% block title %}Exam List{% endblock %}
+{% block content %}
+<h2>Exams</h2>
+<div class="row">
+    {% for exam in exams %}
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ exam.title }}</h5>
+                <p class="card-text">{{ exam.description|truncatewords:30 }}</p>
+                <a href="{% url 'quiz:exam_detail' exam.pk %}" class="btn btn-primary">View</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>No exams found.</p>
+    {% endfor %}
+</div>
+{% endblock %}
