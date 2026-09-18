@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="book-detail">
+    <h1>{{ book.title }}</h1>
+    
+    <div class="meta-info">
+        <p><strong>Author:</strong> {{ book.author.name }}</p>
+        <p><strong>Publisher:</strong> {{ book.publisher.name }}</p>
+        <p><strong>Publication Date:</strong> {{ book.publication_date }}</p>
+        <p><strong>ISBN:</strong> {{ book.isbn }}</p>
+        <p><strong>Price:</strong> {{ book.price }}</p>
+    </div>
+    
+    <div class="categories">
+        <h2>Categories</h2>
+        <ul>
+        {% for category in book.categories.all %}
+            <li>{{ category.name }}{% if category.description %} - {{ category.description }}{% endif %}</li>
+        {% empty %}
+            <li>No categories assigned</li>
+        {% endfor %}
+        </ul>
+    </div>
+    
+    {% if book.cover %}
+        <div class="cover">
+            <img src="{{ book.cover.url }}" alt="{{ book.title }} cover" />
+        </div>
+    {% endif %}
+    
+    <div class="description">
+        <h2>Description</h2>
+        <p>{{ book.description }}</p>
+    </div>
+</div>
+{% endblock %}
