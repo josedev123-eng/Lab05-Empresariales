@@ -1,6 +1,7 @@
-{% extends "base.html" %}
-
-{% block content %}
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="utf-8"><title>{{ book.title }}</title></head>
+<body>
 <div class="book-detail">
     <h1>{{ book.title }}</h1>
     
@@ -34,4 +35,5 @@
         <p>{{ book.description }}</p>
     </div>
 </div>
-{% endblock %}
+</body>
+</html>
