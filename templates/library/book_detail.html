@@ -1,39 +1,161 @@
 <!DOCTYPE html>
 <html lang="es">
-<head><meta charset="utf-8"><title>{{ book.title }}</title></head>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ book.title }} | Biblioteca</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --card: #ffffff;
+    --accent: #2563eb;
+    --accent-dark: #1e40af;
+    --muted: #64748b;
+    --pill: #e0e7ff;
+    --pill-text: #3730a3;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+    min-height: 100vh;
+    padding: 40px 16px;
+    color: #1e293b;
+  }
+  .book-detail {
+    max-width: 760px;
+    margin: 0 auto;
+    background: var(--card);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 25px 60px rgba(0,0,0,.45);
+  }
+  .hero {
+    background: linear-gradient(120deg, var(--accent) 0%, var(--accent-dark) 100%);
+    color: #fff;
+    padding: 36px 36px 28px;
+  }
+  .hero .kicker {
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: .8;
+    margin-bottom: 10px;
+  }
+  .hero h1 { font-size: 30px; line-height: 1.2; }
+  .hero .isbn { margin-top: 8px; font-size: 13px; opacity: .85; }
+  .content { padding: 28px 36px 36px; }
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .meta-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .meta-card .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .meta-card .value { font-size: 17px; font-weight: 600; }
+  .meta-card .sub { font-size: 13px; color: var(--muted); font-weight: 400; }
+  .price { color: #15803d; }
+  h2 {
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    margin: 22px 0 12px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 6px;
+  }
+  .pills { display: flex; flex-wrap: wrap; gap: 10px; list-style: none; }
+  .pills li {
+    background: var(--pill);
+    color: var(--pill-text);
+    font-weight: 600;
+    font-size: 14px;
+    padding: 8px 16px;
+    border-radius: 999px;
+  }
+  .pills li small { font-weight: 400; opacity: .75; }
+  .empty { color: var(--muted); font-style: italic; }
+  .cover { text-align: center; margin: 20px 0 4px; }
+  .cover img {
+    max-width: 220px;
+    border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(0,0,0,.25);
+  }
+  .description p { line-height: 1.7; color: #334155; }
+  .back { display: inline-block; margin-top: 26px; color: var(--accent); text-decoration: none; font-weight: 600; }
+  .back:hover { text-decoration: underline; }
+  @media (max-width: 560px) {
+    .hero, .content { padding-left: 20px; padding-right: 20px; }
+    .hero h1 { font-size: 23px; }
+  }
+</style>
+</head>
 <body>
 <div class="book-detail">
+  <div class="hero">
+    <span class="kicker">📚 Biblioteca · Detalle del libro</span>
     <h1>{{ book.title }}</h1>
-    
-    <div class="meta-info">
-        <p><strong>Author:</strong> {{ book.author.name }}</p>
-        <p><strong>Publisher:</strong> {{ book.publisher.name }}</p>
-        <p><strong>Publication Date:</strong> {{ book.publication_date }}</p>
-        <p><strong>ISBN:</strong> {{ book.isbn }}</p>
-        <p><strong>Price:</strong> {{ book.price }}</p>
+    <div class="isbn">ISBN: {{ book.isbn }}</div>
+  </div>
+
+  <div class="content">
+    <div class="meta-grid">
+      <div class="meta-card">
+        <div class="label">✍️ Autor</div>
+        <div class="value">{{ book.author.name }}</div>
+        {% if book.author.email %}<div class="sub">{{ book.author.email }}</div>{% endif %}
+      </div>
+      <div class="meta-card">
+        <div class="label">🏢 Editorial</div>
+        <div class="value">{{ book.publisher.name }}</div>
+        {% if book.publisher.website %}<div class="sub">{{ book.publisher.website }}</div>{% endif %}
+      </div>
+      <div class="meta-card">
+        <div class="label">📅 Publicación</div>
+        <div class="value">{{ book.publication_date }}</div>
+      </div>
+      <div class="meta-card">
+        <div class="label">💲 Precio</div>
+        <div class="value price">S/ {{ book.price }}</div>
+      </div>
     </div>
-    
-    <div class="categories">
-        <h2>Categories</h2>
-        <ul>
-        {% for category in book.categories.all %}
-            <li>{{ category.name }}{% if category.description %} - {{ category.description }}{% endif %}</li>
-        {% empty %}
-            <li>No categories assigned</li>
-        {% endfor %}
-        </ul>
-    </div>
-    
+
+    <h2>🏷️ Categorías</h2>
+    <ul class="pills">
+    {% for category in book.categories.all %}
+      <li>{{ category.name }}{% if category.description %} <small>· {{ category.description }}</small>{% endif %}</li>
+    {% empty %}
+      <li class="empty">Sin categorías asignadas</li>
+    {% endfor %}
+    </ul>
+
     {% if book.cover %}
-        <div class="cover">
-            <img src="{{ book.cover.url }}" alt="{{ book.title }} cover" />
-        </div>
-    {% endif %}
-    
-    <div class="description">
-        <h2>Description</h2>
-        <p>{{ book.description }}</p>
+    <h2>🖼️ Portada</h2>
+    <div class="cover">
+      <img src="{{ book.cover.url }}" alt="Portada de {{ book.title }}">
     </div>
+    {% endif %}
+
+    {% if book.description %}
+    <h2>📝 Descripción</h2>
+    <div class="description"><p>{{ book.description }}</p></div>
+    {% endif %}
+
+    <a class="back" href="/admin/library/book/">← Volver al listado en el admin</a>
+  </div>
 </div>
 </body>
 </html>
