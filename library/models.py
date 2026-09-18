@@ -13,6 +13,22 @@ class Author(models.Model):
         return self.name
 
 
+class AuthorProfile(models.Model):
+    author = models.OneToOneField(
+        Author,
+        on_delete=models.CASCADE,
+        related_name='profile'
+    )
+    biography = models.TextField(blank=True)
+    photo = models.ImageField(upload_to='authors/', blank=True, null=True)
+
+    class Meta:
+        ordering = ['author__name']
+
+    def __str__(self):
+        return f'Perfil de {self.author.name}'
+
+
 class Category(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)

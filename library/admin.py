@@ -1,11 +1,17 @@
 from django.contrib import admin
-from .models import Author, Book, Publisher, Category, Publication
+from .models import Author, AuthorProfile, Book, Publisher, Category, Publication
 
 
 @admin.register(Author)
 class AuthorAdmin(admin.ModelAdmin):
     list_display = ['name', 'email']
     search_fields = ['name', 'email']
+
+
+@admin.register(AuthorProfile)
+class AuthorProfileAdmin(admin.ModelAdmin):
+    list_display = ['author', 'biography']
+    search_fields = ['author__name']
 
 
 @admin.register(Category)
