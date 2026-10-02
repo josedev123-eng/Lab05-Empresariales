@@ -7,75 +7,102 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:#0b1020;color:#e5e7eb;min-height:100vh}
-.topbar{max-width:1200px;margin:0 auto;padding:18px 20px 0}
-.topbar a{color:#7dd3fc;text-decoration:none;font-weight:600;margin-right:18px}
-.hero{max-width:1200px;margin:18px auto 0;padding:0 20px;display:grid;grid-template-columns:300px 1fr;gap:28px}
-.poster img{width:100%;border-radius:18px;box-shadow:0 20px 50px rgba(0,0,0,.55);aspect-ratio:2/3;object-fit:cover}
-.details{background:#151b33;border:1px solid #263056;border-radius:18px;padding:26px 28px}
+.backdrop{position:relative;overflow:hidden;background:#0b1020}
+.backdrop .bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(28px) brightness(.38);transform:scale(1.15)}
+.backdrop .wrap{position:relative;max-width:1200px;margin:0 auto;padding:26px 20px 34px}
+.topbar a{color:#7dd3fc;text-decoration:none;font-weight:600;margin-right:18px;text-shadow:0 1px 8px #000}
+.hero{display:grid;grid-template-columns:300px 1fr;gap:28px;margin-top:16px}
+.poster img{width:100%;border-radius:18px;box-shadow:0 20px 50px rgba(0,0,0,.6);aspect-ratio:2/3;object-fit:cover}
+.details{background:rgba(21,27,51,.92);border:1px solid #263056;border-radius:18px;padding:26px 28px}
 .details h1{font-size:32px}
 .meta{color:#94a3b8;margin-top:6px}
 .pills{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
-.pills span{background:#312e81;color:#e0e7ff;font-weight:600;font-size:13px;padding:6px 14px;border-radius:999px}
+.pills a,.pills span{background:#312e81;color:#e0e7ff;font-weight:600;font-size:13px;padding:6px 14px;border-radius:999px;text-decoration:none}
+.pills a:hover{background:#4338ca}
 .score{display:inline-block;background:#052e16;border:1px solid #22c55e;color:#bbf7d0;font-weight:700;padding:8px 16px;border-radius:12px;margin:6px 0 12px;font-size:18px}
 .synopsis{line-height:1.7;color:#cbd5e1;margin:10px 0}
 .crew{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px}
 .person{display:flex;align-items:center;gap:10px;background:#0f172a;border:1px solid #263056;border-radius:12px;padding:8px 12px 8px 8px}
 .person img{width:44px;height:44px;border-radius:50%;object-fit:cover}
 .person small{display:block;color:#94a3b8}
-section{max-width:1200px;margin:22px auto 0;padding:0 20px}
+section{max-width:1200px;margin:0 auto;padding:0 20px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+@media(max-width:860px){.cols{grid-template-columns:1fr}.hero{grid-template-columns:1fr}.poster img{max-width:280px}}
 h2{font-size:18px;text-transform:uppercase;letter-spacing:1.5px;color:#94a3b8;margin:26px 0 12px;border-bottom:2px solid #263056;padding-bottom:8px}
+.bar{display:flex;align-items:center;gap:10px;margin:7px 0;font-size:13px;color:#94a3b8}
+.bar .track{flex:1;height:10px;background:#1e293b;border-radius:999px;overflow:hidden}
+.bar .fill{height:100%;background:linear-gradient(90deg,#f59e0b,#fbbf24);border-radius:999px}
+.bar b{color:#fde68a;min-width:70px;text-align:right}
+.dist{background:#151b33;border:1px solid #263056;border-radius:14px;padding:16px 18px}
 .review{background:#151b33;border:1px solid #263056;border-radius:12px;padding:14px 16px;margin-bottom:10px}
 .review .stars{color:#fbbf24;font-size:17px;letter-spacing:2px}
 .review p{color:#cbd5e1;margin-top:6px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
-.card{background:#151b33;border:1px solid #263056;border-radius:14px;overflow:hidden;text-decoration:none;color:inherit}
+.card{background:#151b33;border:1px solid #263056;border-radius:14px;overflow:hidden;text-decoration:none;color:inherit;transition:transform .15s}
+.card:hover{transform:translateY(-4px);border-color:#fbbf24}
 .card img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block}
 .card div{padding:10px 12px;font-size:14px}
 .card b{color:#fff}
 .card small{color:#fbbf24;font-weight:700}
-@media(max-width:720px){.hero{grid-template-columns:1fr}.poster img{max-width:280px}}
 </style>
 </head>
 <body>
-<div class="topbar">
-  <a href="{% url 'movies:movie_list' %}">← Catálogo</a>
-  <a href="{% url 'movies:movie_recommendations' movie.pk %}">✨ Solo recomendaciones</a>
-  <a href="/admin/movies/movie/{{ movie.pk }}/change/">⚙️ Editar en admin</a>
-</div>
-<div class="hero">
-  <div class="poster">
-    {% if movie.poster %}<img src="{{ movie.poster.url }}" alt="Póster de {{ movie.title }}">
-    {% else %}<img src="https://picsum.photos/seed/movie{{ movie.pk }}/400/600" alt="Póster de {{ movie.title }}">{% endif %}
-  </div>
-  <div class="details">
-    <h1>{{ movie.title }} ({{ movie.year }})</h1>
-    <div class="meta">🎥 {{ movie.director.name|default:"Dirección desconocida" }}
-      {% if movie.duration_minutes %} · ⏱️ {{ movie.duration_minutes }} min{% endif %}</div>
-    <div class="pills">{% for g in movie.genres.all %}<span>{{ g.name }}</span>{% empty %}<span>Sin género</span>{% endfor %}</div>
-    <div class="score">{% if movie.avg_rating %}⭐ {{ movie.avg_rating }} / 5 · {{ movie.ratings.count }} voto{{ movie.ratings.count|pluralize }}{% else %}☆ Sin votos todavía{% endif %}</div>
-    {% if movie.synopsis %}<p class="synopsis">{{ movie.synopsis }}</p>{% endif %}
-    <div class="crew">
-      {% if movie.director and movie.director.photo %}
-        <div class="person"><img src="{{ movie.director.photo.url }}" alt="{{ movie.director.name }}"><div><b>{{ movie.director.name }}</b><small>Dirección</small></div></div>
-      {% endif %}
-      {% for p in movie.cast.all %}
-        <div class="person">{% if p.photo %}<img src="{{ p.photo.url }}" alt="{{ p.name }}">{% endif %}<div><b>{{ p.name }}</b><small>Reparto</small></div></div>
-      {% endfor %}
+<div class="backdrop">
+  <div class="bg" style="background-image:url('{% if movie.poster %}{{ movie.poster.url }}{% else %}https://picsum.photos/seed/movie{{ movie.pk }}/800/450{% endif %}')"></div>
+  <div class="wrap">
+    <div class="topbar">
+      <a href="{% url 'movies:movie_list' %}">← Catálogo</a>
+      <a href="{% url 'movies:movie_recommendations' movie.pk %}">✨ Solo recomendaciones</a>
+      <a href="/admin/movies/movie/{{ movie.pk }}/change/">⚙️ Editar en admin</a>
+    </div>
+    <div class="hero">
+      <div class="poster">
+        {% if movie.poster %}<img src="{{ movie.poster.url }}" alt="Póster de {{ movie.title }}">
+        {% else %}<img src="https://picsum.photos/seed/movie{{ movie.pk }}/400/600" alt="Póster de {{ movie.title }}">{% endif %}
+      </div>
+      <div class="details">
+        <h1>{{ movie.title }} ({{ movie.year }})</h1>
+        <div class="meta">🎥 {{ movie.director.name|default:"Dirección desconocida" }}
+          {% if movie.duration_minutes %} · ⏱️ {{ movie.duration_minutes }} min{% endif %} · 💬 {{ rating_total }} voto{{ rating_total|pluralize }}</div>
+        <div class="pills">{% for g in movie.genres.all %}<a href="{% url 'movies:movie_list' %}?genero={{ g.pk }}">{{ g.name }}</a>{% empty %}<span>Sin género</span>{% endfor %}</div>
+        <div class="score">{% if movie.avg_rating %}⭐ {{ movie.avg_rating }} / 5{% else %}☆ Sin votos todavía{% endif %}</div>
+        {% if movie.synopsis %}<p class="synopsis">{{ movie.synopsis }}</p>{% endif %}
+        <div class="crew">
+          {% if movie.director and movie.director.photo %}
+            <div class="person"><img src="{{ movie.director.photo.url }}" alt="{{ movie.director.name }}"><div><b>{{ movie.director.name }}</b><small>Dirección</small></div></div>
+          {% endif %}
+          {% for p in movie.cast.all %}
+            <div class="person">{% if p.photo %}<img src="{{ p.photo.url }}" alt="{{ p.name }}">{% endif %}<div><b>{{ p.name }}</b><small>Reparto</small></div></div>
+          {% endfor %}
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
 <section>
-  <h2>💬 Valoraciones</h2>
-  {% for r in movie.ratings.all %}
-    <div class="review">
-      <span class="stars">{% if r.score >= 1 %}★{% else %}☆{% endif %}{% if r.score >= 2 %}★{% else %}☆{% endif %}{% if r.score >= 3 %}★{% else %}☆{% endif %}{% if r.score >= 4 %}★{% else %}☆{% endif %}{% if r.score >= 5 %}★{% else %}☆{% endif %}</span>
-      <b> {{ r.score }}/5 · {{ r.reviewer_name }}</b>
-      {% if r.comment %}<p>{{ r.comment }}</p>{% endif %}
+  <div class="cols">
+    <div>
+      <h2>💬 Valoraciones</h2>
+      {% for r in movie.ratings.all %}
+        <div class="review">
+          <span class="stars">{% if r.score >= 1 %}★{% else %}☆{% endif %}{% if r.score >= 2 %}★{% else %}☆{% endif %}{% if r.score >= 3 %}★{% else %}☆{% endif %}{% if r.score >= 4 %}★{% else %}☆{% endif %}{% if r.score >= 5 %}★{% else %}☆{% endif %}</span>
+          <b> {{ r.score }}/5 · {{ r.reviewer_name }}</b>
+          {% if r.comment %}<p>{{ r.comment }}</p>{% endif %}
+        </div>
+      {% empty %}
+        <p style="color:#94a3b8">Sin valoraciones todavía. Añade una desde el <a style="color:#7dd3fc" href="/admin/movies/rating/add/?movie={{ movie.pk }}">admin</a>.</p>
+      {% endfor %}
     </div>
-  {% empty %}
-    <p style="color:#94a3b8">Sin valoraciones todavía. Añade una desde el <a style="color:#7dd3fc" href="/admin/movies/rating/add/?movie={{ movie.pk }}">admin</a>.</p>
-  {% endfor %}
+    <div>
+      <h2>📊 Reparto de notas</h2>
+      <div class="dist">
+        {% for b in rating_bars %}
+          <div class="bar"><span>{{ b.stars }} ★</span><div class="track"><div class="fill" style="width:{{ b.pct }}%"></div></div><b>{{ b.count }} ({{ b.pct }}%)</b></div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
 
   <h2>✨ Recomendadas del mismo género (mejor valoradas)</h2>
   <div class="grid">
