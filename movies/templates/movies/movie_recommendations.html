@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recomendaciones para {{ movie.title }}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0b1020;color:#e5e7eb;min-height:100vh}
+.banner{max-width:1000px;margin:26px auto 0;padding:22px;display:flex;gap:18px;align-items:center;background:linear-gradient(120deg,#7c2d12,#312e81);border-radius:18px}
+.banner img{width:90px;aspect-ratio:2/3;object-fit:cover;border-radius:10px}
+.banner h1{font-size:22px}
+.banner p{color:#e0e7ff;opacity:.9;margin-top:6px}
+.banner a{color:#fde68a;font-weight:600}
+main{max-width:1000px;margin:0 auto;padding:24px 20px 60px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:18px;margin-top:16px}
+.card{background:#151b33;border:1px solid #263056;border-radius:14px;overflow:hidden;text-decoration:none;color:inherit}
+.card img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block}
+.card div{padding:12px 14px}
+.card b{color:#fff}
+.card small{color:#fbbf24;font-weight:700}
+.back{display:inline-block;margin-top:22px;color:#7dd3fc;text-decoration:none;font-weight:600}
+</style>
+</head>
+<body>
+<main>
+<div class="banner">
+  {% if movie.poster %}<img src="{{ movie.poster.url }}" alt="{{ movie.title }}">{% endif %}
+  <div>
+    <h1>✨ Si te gustó <i>{{ movie.title }}</i> ({{ movie.year }})…</h1>
+    <p>Mismo género · ordenadas por nota media · <a href="{% url 'movies:movie_detail' movie.pk %}">volver al detalle</a></p>
+  </div>
+</div>
+<div class="grid">
+{% for rec in recommendations %}
+  <a class="card" href="{% url 'movies:movie_detail' rec.pk %}">
+    {% if rec.poster %}<img src="{{ rec.poster.url }}" alt="{{ rec.title }}" loading="lazy">
+    {% else %}<img src="https://picsum.photos/seed/movie{{ rec.pk }}/400/600" alt="{{ rec.title }}" loading="lazy">{% endif %}
+    <div><b>{{ rec.title }}</b> ({{ rec.year }})<br><small>{% if rec.avg_score %}⭐ {{ rec.avg_score|floatformat:1 }}{% else %}☆ sin votos{% endif %}</small></div>
+  </a>
+{% empty %}
+  <p>Sin recomendaciones disponibles.</p>
+{% endfor %}
+</div>
+<a class="back" href="{% url 'movies:movie_list' %}">← Volver al catálogo</a>
+</main>
+</body>
+</html>
